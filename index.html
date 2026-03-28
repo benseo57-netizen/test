@@ -250,7 +250,7 @@
           fontSize:14, fontWeight:700, fontFamily:"Arial",
           display:"flex", alignItems:"center", justifyContent:"center", gap:6,
         }}>
-          {copied ? "✅  클립보드에 복사됨" : "📋  결과 복사 (이메일•메신저용)"}
+          {copied ? "✅ 클립보드에 복사됨" : "📋 결과 복사 (이메일•메신저용)"}
         </button>
       );
     }
@@ -465,7 +465,8 @@
                 border:"1px solid "+(cmA3>=0?"#86EFAC":"#FECACA") }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <div>
-                    <div style={{ fontSize:11, color:C.muted }}>단위 마진</div>
+                    <div style={{ fontSize:11, color:C.muted }}>이 Rate 적용 시 kg당 마진</div>
+                    <div style={{ fontSize:10, color:C.dim }}>최대허용매입단가 - 총지급풀</div>
                   </div>
                   <div style={{ textAlign:"right" }}>
                     <div style={{ fontSize:22, fontWeight:800, color:cmA3>=0?C.green:C.red }}>
@@ -578,7 +579,8 @@
                 border:"1px solid "+(cmB3>=0?"#86EFAC":"#FECACA") }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <div>
-                    <div style={{ fontSize:11, color:C.muted }}>단위 마진</div>
+                    <div style={{ fontSize:11, color:C.muted }}>kg당 마진</div>
+                    <div style={{ fontSize:10, color:C.dim }}>최대허용매입단가 - 총지급액</div>
                   </div>
                   <div style={{ textAlign:"right" }}>
                     <div style={{ fontSize:22, fontWeight:800, color:cmB3>=0?C.green:C.red }}>
