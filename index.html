@@ -8,24 +8,25 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      height: 100%;
+      width: 100%;
       min-height: 100dvh;
     }
 
     body {
       font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      min-height: 100dvh;
     }
 
+    /* 모바일: 전체화면 */
     .card {
       width: 100%;
       min-height: 100dvh;
-      padding: 32px 20px 40px;
+      padding: 36px 18px 48px;
       display: flex;
       flex-direction: column;
     }
 
+    /* 데스크톱: 카드 형태 */
     @media (min-width: 600px) {
       body {
         display: flex;
@@ -85,7 +86,7 @@
     }
     .input-row:focus-within { border-color: #ffdd00; }
 
-    input[type="number"] {
+    input#currentPrice {
       flex: 1;
       background: transparent;
       border: none;
@@ -96,9 +97,8 @@
       padding: 14px 12px;
       font-family: inherit;
       text-align: right;
+      caret-color: #ffdd00;
     }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
     .currency-tag {
       color: rgba(255,221,0,0.6);
@@ -127,7 +127,6 @@
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
-      transition: background 0.1s, color 0.1s;
     }
     .quick-btn:active {
       background: rgba(255,221,0,0.2);
@@ -273,7 +272,7 @@
   <div class="input-group">
     <div class="input-label">📌 현재 주가 입력</div>
     <div class="input-row">
-      <input type="number" id="currentPrice" placeholder="100000" value="100000" oninput="calculate()" />
+      <input id="currentPrice" type="text" inputmode="numeric" placeholder="100,000" />
       <span class="currency-tag">원</span>
     </div>
     <div class="quick-btns">
@@ -341,18 +340,37 @@
   const ACQUIRE_PRICE = 50000;
   const LOAN_AMOUNT   = 61600000;
 
+  const input = document.getElementById('currentPrice');
+
+  // 숫자만 추출
+  function getRawValue() {
+    return parseInt(input.value.replace(/,/g, ''), 10) || 0;
+  }
+
+  // 입력칸에 콤마 포맷으로 표시
+  function formatInput(val) {
+    input.value = val > 0 ? val.toLocaleString('ko-KR') : '';
+  }
+
   function fmt(n) {
     return n.toLocaleString('ko-KR') + ' 원';
   }
 
-  // onclick만 사용, 값 직접 설정 후 calculate() 호출
   function setPrice(p) {
-    document.getElementById('currentPrice').value = p;
+    formatInput(p);
     calculate();
   }
 
+  // 직접 타이핑 시: 숫자 외 문자 제거 후 재포맷
+  input.addEventListener('input', function () {
+    const raw = parseInt(input.value.replace(/,/g, '').replace(/[^0-9]/g, ''), 10) || 0;
+    const pos = input.selectionStart;
+    formatInput(raw);
+    calculate();
+  });
+
   function calculate() {
-    const price = parseFloat(document.getElementById('currentPrice').value) || 0;
+    const price = getRawValue();
 
     const holdingVal = MY_SHARES * price;
     const otherVal   = OTHER_SHARES * price;
@@ -385,18 +403,8 @@
     }
   }
 
-  // 버튼 터치 이벤트 직접 바인딩 (onclick 보완)
-  document.addEventListener('DOMContentLoaded', function () {
-    const prices = [50000, 70000, 100000, 150000, 200000];
-    document.querySelectorAll('.quick-btn').forEach(function(btn, i) {
-      btn.addEventListener('touchend', function(e) {
-        e.preventDefault();
-        setPrice(prices[i]);
-      });
-    });
-  });
-
-  calculate();
+  // 초기값 10만원으로 세팅
+  setPrice(100000);
 </script>
 </body>
 </html>
