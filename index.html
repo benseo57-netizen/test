@@ -5,49 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>우리사주 수익 계산기</title>
   <style>
+    /* 기본 초기화 및 모바일 가로 스크롤 완벽 차단 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { overflow-x: hidden; width: 100%; background: #1a1a2e; }
+    html, body { background-color: #1a1a2e; width: 100%; overflow-x: hidden; }
 
     body {
       font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
       color: #fff;
-      padding-bottom: 40px;
+      display: block; /* Flex 충돌을 막기 위해 기본 블록 요소로 변경 */
+      -webkit-font-smoothing: antialiased;
     }
 
+    /* 전체 컨테이너: 좌우 여백을 최소화하여 화면을 넓게 씀 */
     .container {
-      width: 100%;
-      /* 가로 폭을 기존 480px에서 550px로 확장 */
-      max-width: 550px; 
-      padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px; /* 요소 간 간격을 조금 더 여유 있게 조정 */
+      max-width: 500px;
+      margin: 0 auto; /* 데스크톱에서는 중앙 정렬 */
+      padding: 20px 16px 40px 16px; /* 좌우 16px로 밀착 */
     }
 
     h1 {
-      font-size: clamp(24px, 8vw, 30px);
+      font-size: 26px;
       font-weight: 800;
       text-align: center;
-      margin-top: 10px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
     }
 
     .subtitle {
-      color: rgba(255,255,255,0.4);
       font-size: 14px;
+      color: rgba(255,255,255,0.4);
       text-align: center;
-      margin-top: -15px;
+      margin-bottom: 24px;
     }
 
-    /* 입력 섹션: 가로가 넓어진 만큼 패딩과 폰트 크기 최적화 */
+    /* 1. 주가 입력 섹션 (중첩 패딩 제거로 너비 극대화) */
     .input-section {
-      background: rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 28px 24px;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 16px; /* 기존 24px -> 16px로 줄여 내부 공간 확보 */
+      margin-bottom: 14px; /* 아래 요소와의 간격 바짝 붙임 */
     }
 
     .input-label {
@@ -59,23 +55,22 @@
     }
 
     .input-wrapper {
-      background: #000;
-      border: 3px solid #ffdd00;
-      border-radius: 16px;
-      padding: 10px 20px;
       display: flex;
       align-items: center;
-      box-shadow: 0 4px 15px rgba(255, 221, 0, 0.15);
+      background: #000;
+      border: 3px solid #ffdd00;
+      border-radius: 14px;
+      padding: 10px 16px;
     }
 
     input[type="number"] {
       flex: 1;
-      width: 100%;
+      min-width: 0; /* 중요: 숫자가 길어져도 레이아웃이 터지지 않도록 방어 */
       background: transparent;
       border: none;
       outline: none;
       color: #ffdd00;
-      font-size: clamp(32px, 10vw, 44px);
+      font-size: clamp(30px, 9vw, 38px); /* 화면에 맞춰 큼직하게 */
       font-weight: 800;
       text-align: right;
       font-family: inherit;
@@ -83,54 +78,55 @@
 
     .unit {
       color: #ffdd00;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
-      margin-left: 10px;
+      margin-left: 8px;
     }
 
     .quick-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 20px;
+      gap: 8px;
+      margin-top: 14px;
     }
     .btn {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.1);
+      border: none;
       border-radius: 10px;
       color: #fff;
       padding: 12px 0;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.2s;
     }
-    .btn:active { background: #ffdd00; color: #000; transform: scale(0.95); }
+    .btn:active { background: #ffdd00; color: #000; }
 
-    /* 정보 카드: 가로가 넓어져서 수치 확인이 더 편해짐 */
+    /* 2. 기본 정보 카드 (간격 압축) */
     .info-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
     .info-card {
-      background: rgba(255,255,255,0.06);
-      padding: 18px;
-      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      padding: 14px 16px;
+      border-radius: 16px;
     }
-    .info-card .label { color: rgba(255,255,255,0.4); font-size: 12px; margin-bottom: 6px; }
-    .info-card .value { font-size: 17px; font-weight: 700; }
+    .info-card .label { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+    .info-card .value { font-size: 16px; font-weight: 700; }
 
-    /* 상세 리스트 */
+    /* 3. 평가액 리스트 (간격 압축) */
     .detail-list {
       background: rgba(255,255,255,0.03);
-      border-radius: 20px;
-      padding: 10px 24px;
+      border-radius: 16px;
+      padding: 6px 16px;
+      margin-bottom: 14px;
     }
     .row {
       display: flex;
       justify-content: space-between;
-      padding: 15px 0;
+      padding: 14px 0;
       border-bottom: 1px solid rgba(255,255,255,0.05);
       font-size: 15px;
     }
@@ -138,28 +134,28 @@
     .row .label { color: rgba(255,255,255,0.5); }
     .row .val { font-weight: 600; }
 
-    /* 수익 박스: 가로 확장에 맞춰 폰트와 패딩 강조 */
+    /* 4. 최종 수익 박스 (위쪽 리스트와 14px 간격으로 밀착) */
     .summary-box {
       background: linear-gradient(135deg, #00c853 0%, #1b5e20 100%);
-      border-radius: 24px;
-      padding: 35px 20px;
+      border-radius: 20px;
+      padding: 30px 16px;
       text-align: center;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
     }
     .summary-box.loss {
       background: linear-gradient(135deg, #ff5252 0%, #b71c1c 100%);
     }
 
-    .res-label { font-size: 14px; margin-bottom: 10px; font-weight: 600; opacity: 0.9; }
-    .res-amount { font-size: clamp(36px, 11vw, 48px); font-weight: 900; margin-bottom: 6px; }
-    .res-rate { font-size: 18px; font-weight: 700; }
+    .res-label { font-size: 13px; margin-bottom: 8px; font-weight: 600; opacity: 0.9; }
+    .res-amount { font-size: clamp(34px, 10vw, 44px); font-weight: 900; margin-bottom: 4px; letter-spacing: -1px; }
+    .res-rate { font-size: 16px; font-weight: 700; }
 
     footer {
       text-align: center;
       font-size: 12px;
       color: rgba(255,255,255,0.2);
-      margin-top: 10px;
-      line-height: 1.6;
+      margin-top: 24px;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -170,7 +166,7 @@
   <p class="subtitle">실시간 수익 현황</p>
 
   <div class="input-section">
-    <span class="input-label">현재 주가 입력 (원)</span>
+    <span class="input-label">실시간 주가 입력 (원)</span>
     <div class="input-wrapper">
       <input type="number" id="currentPrice" value="100000" oninput="calculate()" pattern="\d*">
       <span class="unit">원</span>
@@ -203,7 +199,7 @@
   </div>
 
   <footer>
-    기준: 취득가 50,000원 / 대출 6,160만원<br>
+    데이터 기준: 취득가 50,000원 / 대출 6,160만원<br>
     © 2026 Stock Calculator
   </footer>
 </div>
